@@ -1,5 +1,6 @@
-CREATE TABLE roles (
+CREATE TABLE roles_entity (
     id BIGINT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL UNIQUE,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    INDEX(name)
 );

@@ -4,4 +4,7 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
+    roles VARCHAR(255),
+    INDEX (name),
+    INDEX (roles)
 );

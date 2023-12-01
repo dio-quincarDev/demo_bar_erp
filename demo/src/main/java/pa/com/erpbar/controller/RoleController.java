@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import pa.com.erpbar.role.IRoleService;
-import pa.com.erpbar.role.Role;
+import pa.com.erpbar.role.RoleEntity;
 
 import java.util.List;
 
@@ -19,13 +19,13 @@ public class RoleController {
     private final IRoleService roleService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<Role>> getAllRoles() {
+    public ResponseEntity<List<RoleEntity>> getAllRoles() {
         return new ResponseEntity<>(roleService.getAllRoles(), FOUND);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Role> createRole(@RequestBody Role role) {
-        return new ResponseEntity<>(roleService.createRole(role), CREATED);
+    public ResponseEntity<RoleEntity> createRole(@RequestBody RoleEntity roleEntity) {
+        return new ResponseEntity<>(roleService.createRole(roleEntity), CREATED);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -34,7 +34,7 @@ public class RoleController {
     }
 
     @PostMapping("/remove-all-users-from-role/{id}")
-    public Role removeAllUsersfromRole(@PathVariable("id") Long roleId) {
+    public RoleEntity removeAllUsersfromRole(@PathVariable("id") Long roleId) {
        return roleService.removeAllUsersFromRole(roleId);
     }
 

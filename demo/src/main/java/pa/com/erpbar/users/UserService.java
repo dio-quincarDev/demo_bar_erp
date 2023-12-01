@@ -3,8 +3,8 @@ package pa.com.erpbar.users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pa.com.erpbar.role.Role;
-import pa.com.erpbar.role.RoleRepository;
+import pa.com.erpbar.role.RoleEntity;
+import pa.com.erpbar.role.RoleEntityRepository;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +17,7 @@ public class UserService  {
     private UserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private RoleEntityRepository roleEntityRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -25,8 +25,8 @@ public class UserService  {
     // Method to create a new user with a default role
     public User createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Role defaultRole = roleRepository.findByRoleName("USER");
-        user.getRoles().add(defaultRole);
+        RoleEntity defaultRoleEntity = roleEntityRepository.findByRoleName("USER");
+        user.getRoleEntities().add(defaultRoleEntity);
         return userRepository.save(user);
     }
 
@@ -41,8 +41,8 @@ public class UserService  {
     }
 
     // Method to update a user's roles
-    public User updateRoles(User user, List<Role> roles) {
-        user.setRoles(new HashSet<>(roles));
+    public User updateRoles(User user, List<RoleEntity> roleEntities) {
+        user.setRoleEntities(new HashSet<>(roleEntities));
         return userRepository.save(user);
     }
 

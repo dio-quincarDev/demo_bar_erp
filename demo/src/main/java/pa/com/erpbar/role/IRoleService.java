@@ -6,23 +6,23 @@ import java.util.List;
 
 public interface IRoleService {
 
-    List<Role> getAllRoles();
+    List<RoleEntity> getAllRoles();
 
-    Role createRole(Role theRole);
+    RoleEntity createRole(RoleEntity theRoleEntity);
 
     void deleteRole(Long roleId);
 
-    Role findByName(String  name);
+    RoleEntity findByName(String  name);
 
-    Role findById(Long roleId);
+    RoleEntity findById(Long roleId);
 
     User removeUserFromRole(Long userId, Long roleId);
 
-    Role removeUserFromRole(Long roleId);
+    RoleEntity removeUserFromRole(Long roleId);
 
     User assignUserToRole(Long userId, Long roleId);
 
-    Role removeAllUsersFromRole(Long roleId);
+    RoleEntity removeAllUsersFromRole(Long roleId);
 
 
 }

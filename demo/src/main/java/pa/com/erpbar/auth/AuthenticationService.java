@@ -5,11 +5,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pa.com.erpbar.role.RoleEnum;
 import pa.com.erpbar.security.JwtService;
 import pa.com.erpbar.users.User;
 import pa.com.erpbar.users.UserRepository;
 
-import pa.com.erpbar.role.Role;
+import pa.com.erpbar.role.RoleEntity;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,10 +26,10 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
-                .username(request.getUsername())
+                .fullname(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .roles(Set.of(RoleEnum.USER))
                 .build();
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);

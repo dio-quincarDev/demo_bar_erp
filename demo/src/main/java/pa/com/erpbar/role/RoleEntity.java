@@ -1,12 +1,8 @@
 package pa.com.erpbar.role;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.NaturalId;
-import org.springframework.security.core.GrantedAuthority;
 import pa.com.erpbar.users.User;
 
 import java.util.Collection;
@@ -15,10 +11,11 @@ import java.util.List;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = "users")
-public class Role  {
+public class RoleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,10 +24,10 @@ public class Role  {
     @NaturalId
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roleEntities")
     private Collection<User> users = new HashSet<>();
 
-    public Role(String name) {
+    public RoleEntity(String name) {
         this.name = name;
     }
 
@@ -43,12 +40,12 @@ public class Role  {
     }
 
     public void removeUserFromRole(User user) {
-        user.getRoles().remove(this);
+        user.getRoleEntities().remove(this);
         this.getUsers().remove(user);
     }
 
     public void assignUserToRole(User user){
-        user.getRoles().add(this);
+        user.getRoleEntities().add(this);
         this.getUsers().add(user);
     }
 

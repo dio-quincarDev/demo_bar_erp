@@ -1,5 +1,6 @@
 package pa.com.erpbar.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import pa.com.erpbar.role.Role;
+import pa.com.erpbar.role.RoleEntity;
+import pa.com.erpbar.role.RoleEnum;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,27 +38,25 @@ public class User implements UserDetails {
 
     private String password;
 
+    private Collection<RoleEnum> roles = new HashSet<>();
+
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.DETACH})
-
     @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName= "id"),
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-            private Collection<Role> roles = new HashSet<>();
+    private Collection<RoleEntity> roleEntities = new HashSet<>();
 
     @Override
-    public Collection<? extends GrantedAuthority>getAuthorities() {
-    List< GrantedAuthority> authorities = new ArrayList<>();
-        for (Role role : roles){
-            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getRoleName());
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (RoleEnum role : roles) {
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name());
             authorities.add(authority);
         }
         return authorities;
-    }
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(roles.getRoleName()));
     }
 
     @Override
@@ -71,13 +71,11 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-
         return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-
         return true;
     }
 
@@ -89,5 +87,19 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+
+    @JsonIgnore
+    public Collection<RoleEntity> getRoleEntities() {
+        return roleEntities;
+    }
+
+    public void setRolesFromRoleEntities() {
+        for (RoleEntity roleEntity : roleEntities) {
+            String roleName = roleEntity.getName();
+            RoleEnum roleEnum = RoleEnum.valueOf(roleName);
+            roles.add(roleEnum);
+        }
     }
 }

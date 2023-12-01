@@ -1,7 +1,7 @@
 package pa.com.erpbar.role;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import pa.com.erpbar.exceptions.RoleAlReadyExistException;
@@ -14,48 +14,52 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RoleService implements IRoleService{
-
-    private final RoleRepository roleRepository;
+    @Autowired
+    private final RoleEntityRepository roleEntityRepository;
+    @Autowired
     private final UserRepository userRepository;
 
     @Override
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
+    public List<RoleEntity> getAllRoles() {
+        return roleEntityRepository.findAll();
     }
 
     @Override
-    public Role createRole(Role theRole) {
-        Optional<Role> checkRole = roleRepository.findByName(theRole.getName());
+    public RoleEntity createRole(RoleEntity theRoleEntity) {
+        Optional<RoleEntity> checkRole = roleEntityRepository.findByName(theRoleEntity.getName());
         if (checkRole.isPresent()){
             throw new RoleAlReadyExistException(checkRole.get().getName() + " role already exists"); //
         }
-        return roleRepository.save(theRole);
+        return roleEntityRepository.save(theRoleEntity);
     }
 
     @Override
     public void deleteRole(Long roleId) {
         this.removeAllUsersFromRole(roleId);
-        roleRepository.deleteAllById(Collections.singleton(roleId));
+        roleEntityRepository.deleteAllById(roleId);
+        deleteAllById
     }
 
     @Override
-    public Role findByName(String name) {
-        return roleRepository.findByName(name).get();
+    public RoleEntity findById(Long roleId) {
+        return roleEntityRepository.findById(roleId).get();
     }
 
     @Override
-    public Role findById(Long roleId) {
-        return roleRepository.findById(roleId).get();
+    public RoleEntity findByName(String name) {
+        return roleEntityRepository.findByName(name).get();
     }
+
+
 
     @Override
     public User removeUserFromRole(Long userId, Long roleId) {
         Optional<User> user = userRepository.findById(userId);
-        Optional<Role> role = roleRepository.findById(roleId);
+        Optional<RoleEntity> role = roleEntityRepository.findById(roleId);
         if (role.isPresent() && role.get().getUsers().contains(user.get())) {
 
             role.get().removeUserFromRole(user.get());
-            roleRepository.save(role.get());
+            roleEntityRepository.save(role.get());
             return user.get();
         }
 
@@ -63,10 +67,10 @@ public class RoleService implements IRoleService{
     }
 
     @Override
-    public Role removeUserFromRole( Long roleId) {
-        Optional<Role> role = roleRepository.findById(roleId);
+    public RoleEntity removeUserFromRole(Long roleId) {
+        Optional<RoleEntity> role = roleEntityRepository.findById(roleId);
         role.isPresent();
-        return roleRepository.save(role.get());
+        return roleEntityRepository.save(role.get());
     }
 
 
@@ -74,7 +78,7 @@ public class RoleService implements IRoleService{
     @Override
     public User assignUserToRole(Long userId, Long roleId) {
         Optional<User> user = userRepository.findById(userId);
-        Optional<Role> role = roleRepository.findById(roleId);
+        Optional<RoleEntity> role = roleEntityRepository.findById(roleId);
         if (user.isPresent() && user.get().getRoles().contains(role.get())) {
             throw new UserAlreadyExistsException(user.get().getFullName()+" is already assigned"+ role.get().getName()+" role");
 
@@ -84,7 +88,7 @@ public class RoleService implements IRoleService{
     }
 
     @Override
-    public Role removeAllUsersFromRole(Long roleId) {
+    public RoleEntity removeAllUsersFromRole(Long roleId) {
         return null;
     }
 }
